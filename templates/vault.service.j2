@@ -3,8 +3,13 @@ Description=Vault server
 After=network.target
 
 [Service]
+{% if vault_log_file == 'journal' %}
 ExecStart={{ vault_install_dir }}/vault server -config {{ vault_config_dir }}/vault.hcl
 StandardOutput=journal
+{% else %}
+ExecStart=/bin/sh -c '{{ vault_install_dir }}/vault server -config {{ vault_config_dir }}/vault.hcl > {{ vault_log_file }} 2>&1'
+ExecStop=/usr/bin/pkill -TERM '{{ vault_install_dir }}/vault'
+{% endif %}
 Restart=on-failure
 User={{ vault_user }}
 Group={{ vault_group }}

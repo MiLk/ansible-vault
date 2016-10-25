@@ -105,6 +105,26 @@
   tags:
     - vault
 
+- name: Check if the log file is present
+  stat:
+    path: "{{ vault_log_file }}"
+  when: vault_log_file != 'journal'
+  register: vault_log_file_stat
+  tags:
+    - vault
+
+- name: Create vault log file
+  become: yes
+  file:
+    path: "{{ vault_log_file }}"
+    owner: vault
+    group: vault
+    mode: 0644
+    state: touch
+  when: vault_log_file != 'journal' and (vault_log_file_stat.stat.exists is not defined or not vault_log_file_stat.stat.exists)
+  tags:
+    - vault
+
 - name: Create Vault systemd configuration
   become: yes
   template:

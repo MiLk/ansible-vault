@@ -3,7 +3,7 @@ Description=Vault server
 After=network.target
 
 [Service]
-{% if vault_log_file == 'journal' %}
+{% if vault_use_systemd_journal|bool %}
 ExecStart={{ vault_install_dir }}/vault server -config {{ vault_config_dir }}/vault.hcl
 StandardOutput=journal
 {% else %}

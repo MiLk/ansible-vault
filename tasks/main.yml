@@ -108,7 +108,7 @@
 - name: Check if the log file is present
   stat:
     path: "{{ vault_log_file }}"
-  when: vault_log_file != 'journal'
+  when: not vault_use_systemd_journal|bool
   register: vault_log_file_stat
   tags:
     - vault
@@ -121,7 +121,7 @@
     group: vault
     mode: 0644
     state: touch
-  when: vault_log_file != 'journal' and (vault_log_file_stat.stat.exists is not defined or not vault_log_file_stat.stat.exists)
+  when: not vault_use_systemd_journal|bool and (vault_log_file_stat.stat.exists is not defined or not vault_log_file_stat.stat.exists)
   tags:
     - vault
 
